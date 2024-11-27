@@ -28,7 +28,7 @@ function handleMouseUp() {
 <style lang="scss">
 
 :root {
-	--button-size: 150px;
+	--button-size: 120px;
 	--glow-color: #58a6ff;
 	--glow-color2: #0a8fff;
 	--glow-color3: #58e0ff;
@@ -40,7 +40,7 @@ function handleMouseUp() {
 	left: 50%;
 	width: var(--button-size);
 	height: var(--button-size);
-	transform: translate(-50%, -90%);
+	transform: translate(-50%, -100%);
 
 	& > button {
 		width: var(--button-size);
