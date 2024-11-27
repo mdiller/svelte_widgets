@@ -1,6 +1,10 @@
 :root {
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
+
+  --backcolor-1: 220, 18%, 19%;
+  --backcolor-2: 218, 18%, 13%;
+  --backcolor-3: 218, 18%, 10%;
 }
 
 

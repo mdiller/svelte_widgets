@@ -9,7 +9,6 @@ import ActionBar from './actionbar/ActionBar.svelte';
 
 <main>
 	<div>
-		<div> stuff here  </div>
 		<ActionBar />
 	</div>
 </main>

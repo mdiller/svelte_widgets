@@ -18,7 +18,7 @@ div.actionbar {
 	bottom: 0px;
 	left: 0px;
 	right: 0px;
-	background-color: #1b1f27;
+	background-color: #212630;
 
 	& > div {
 		width: 100%;

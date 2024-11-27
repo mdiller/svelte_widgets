@@ -5,7 +5,7 @@ import RunnerMain from "../kewi_runner/RunnerMain.svelte";
 
 </script>
 
-<main class="container">
+<main>
   <!-- <App /> -->
   <RunnerMain />
 </main>
