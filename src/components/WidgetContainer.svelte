@@ -7,6 +7,10 @@ import Widget from './Widget.svelte';
 import LoopingVideo from './LoopingVideo.svelte';
 import Glasses from './Glasses.svelte';
 
+import { listen } from '@tauri-apps/api/event';
+
+
+
 const componentMap = {
 	video: LoopingVideo,
 	glasses: Glasses
@@ -31,32 +35,62 @@ function toggleAspectLocked() {
 	widgetEditor.aspectRatioLocked = !widgetEditor.aspectRatioLocked;
 }
 
+async function initWidgetStuff() {
+	await widgetProvider.load()
+}
+
+async function addWidget() {
+	widgetProvider.add("example_widget_NEW", "glasses");
+	await widgetProvider.save()
+}
+
+async function saveWidgets() {
+	await widgetProvider.save()
+}
+
 let componentName = "video";
 
-let widgetList = $state([]);
+let widgetList = $derived(widgetProvider.widgets);
 
+function handleKeydown(event) {
+	if (event.key === 'Delete') {
+		if (widgetEditor.editMode == true && widgetEditor.activeWidget) {
+			widgetProvider.remove(widgetEditor.activeWidget);
+			widgetEditor.activeWidget = null;
+		}
+	}
+}
 onMount(async () => {
-	widgetEditor.initializeDragListeners();
-	await widgetProvider.load()
-	widgetList = widgetProvider.widgets;
-	console.log(`${widgetList.length} widgets loaded!`);
-	console.dir(widgetList[0].type);
-});
+	await initWidgetStuff();
 
-onDestroy(() => {
-	widgetEditor.removeDragListeners();
+	// widgetEditor.initializeDragListeners();
+	// window.addEventListener('keydown', handleKeydown);
+
+	// return () => {
+	// 	widgetEditor.removeDragListeners();
+	// 	window.removeEventListener('keydown', handleKeydown);
+	// }
 });
 </script>
 
 <!-- svelte-ignore slot_element_deprecated -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="widgetcontainer {cssClass}">
 	<!-- svelte-ignore event_directive_deprecated -->
-	<button onclick={toggleEditMode}>
-		Toggle Edit Mode
-	</button>
-	<button onclick={toggleAspectLocked}>
-		Lock/Unlock Aspect Ratio
-	</button>
+	<div class="buttonholder">
+		<button onclick={toggleEditMode}>
+			Edit
+		</button>
+		<button onclick={initWidgetStuff}>
+			Init
+		</button>
+		<button onclick={addWidget}>
+			Add
+		</button>
+		<button onclick={saveWidgets}>
+			Save
+		</button>
+	</div>
 	{#each widgetList as widget}
 		{@const CurrentComponent = componentMap[widget.type]}
 		<Widget widget={widget}>
@@ -71,6 +105,11 @@ onDestroy(() => {
 
 <style>
 
+.buttonholder {
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+}
 
 </style>
 	

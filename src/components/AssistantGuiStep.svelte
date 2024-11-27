@@ -26,7 +26,6 @@ let css_classes = $derived.by(() => {
 
 </script>
 
-
 <div id="{step_data.id}" class="{css_classes}">
 	<span>
 		{#if step_data.icon}

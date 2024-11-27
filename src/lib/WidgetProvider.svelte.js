@@ -14,6 +14,11 @@ export class WidgetProvider {
 		await this.save();
 	}
 
+	async remove(widget) {
+		this.widgets = this.widgets.filter(w => w != widget)
+		await this.save();
+	}
+
 	get(widget_id) {
 		this.widgets.find(w => w.id == widget_id);
 	}

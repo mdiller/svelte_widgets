@@ -8,6 +8,7 @@ export class WidgetInfo {
 	height = $state(300);
 	aspectRatio = $state(undefined);
 	type = $state(null);
+	isActive = $state(false);
 
 	constructor(id, type) {
 		this.id = id;

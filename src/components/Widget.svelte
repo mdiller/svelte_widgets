@@ -8,6 +8,14 @@ let { widget } = $props();
 // Use the globally available widgetEditor instance
 let editor = getContext('widgetEditor');
 
+let cssClass = $derived.by(() => {
+	let result = "widget";
+	if (widget.isActive) {
+		result += " widget-active"
+	}
+	return result;
+})
+
 setContext('widgetInfo', widget);
 
 // let posX = $state(0);
@@ -31,7 +39,7 @@ function handleResizeMouseDown(event, corner) {
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore slot_element_deprecated -->
 <div
-	class="widget"
+	class="{cssClass}"
 	onmousedown={handleMouseDown}
 	style="left: {widget.posX}px; top: {widget.posY}px; width: {widget.width}px; height: {widget.height}px;"
 >
@@ -72,6 +80,15 @@ function handleResizeMouseDown(event, corner) {
 
 	:global(.editing) & {
 		display: block;
+	}
+}
+
+.widget-active {
+	.move-handle {
+		border-color: #1369ee;
+	}
+	.resize-handle {
+		background-color: #1369ee;
 	}
 }
 

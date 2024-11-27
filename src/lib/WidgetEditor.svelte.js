@@ -10,11 +10,12 @@ export class WidgetEditor {
 		offsetY: 0, // Cursor offset from drag point
 		startX: 0, // Start of the drag1
 		startY: 0, // Start of the drag1
-		isResizing: false, // New flag to track if resizing (vs moving)
+		isResizing: false, // New flag to track if resizing
+		isDragging: false, // New flag to track if moving
 		corner: Corner.all.TOP_RIGHT
 	});
 	/** @type { WidgetInfo } */
-	draggedWidget = $state(null);
+	activeWidget = $state(null);
 
 	constructor(provider) {
 		this.widgetProvider = provider;
@@ -29,20 +30,31 @@ export class WidgetEditor {
 		this.aspectRatioLocked = !this.aspectRatioLocked;
 	}
 
+	focusWidget(widget) {
+		if (this.activeWidget && this.activeWidget.isActive) {
+			this.activeWidget.isActive = false;
+		}
+		this.activeWidget = widget;
+		if (this.activeWidget && !this.activeWidget.isActive) {
+			this.activeWidget.isActive = true;
+		}
+	}
+
 	startDragging(widget, clientX, clientY) {
-		this.draggedWidget = widget;
+		this.focusWidget(widget);
 		this.dragState = {
 			...this.dragState,
 			offsetX: clientX - widget.posX,
 			offsetY: clientY - widget.posY,
 			startX: clientX,
 			startY: clientY,
-			isResizing: false
+			isResizing: false,
+			isDragging: true,
 		};
 	}
 
 	startResizing(widget, clientX, clientY, corner) {
-		this.draggedWidget = widget;
+		this.focusWidget(widget);
 		let offsetX = clientX - (corner.is_left ? widget.posX : widget.posX + widget.width);
 		let offsetY = clientY - (corner.is_top ? widget.posY : widget.posY + widget.height);
 		this.dragState = {
@@ -54,12 +66,13 @@ export class WidgetEditor {
 			startX: clientX,
 			startY: clientY,
 			isResizing: true,
+			isDragging: false,
 			corner: corner
 		};
 	}
 
 	handleMouseMove(event) {
-		if (this.draggedWidget != null) {
+		if (this.activeWidget != null) {
 			if (this.dragState.isResizing) {
 				let mouseX = Math.max(Math.min((event.clientX - this.dragState.offsetX), window.innerWidth), 0);
 				let mouseY = Math.max(Math.min((event.clientY - this.dragState.offsetY), window.innerHeight), 0);
@@ -77,10 +90,10 @@ export class WidgetEditor {
 				let newWidth = this.dragState.initialWidth + deltaX;
 				let newHeight = this.dragState.initialHeight + deltaY;
 
-				if (this.aspectRatioLocked || this.draggedWidget.aspectRatio != null) {
+				if (this.aspectRatioLocked || this.activeWidget.aspectRatio != null) {
 					let aspectRatio = this.dragState.initialWidth / this.dragState.initialHeight;
-					if (this.draggedWidget.aspectRatio != null) {
-						aspectRatio = this.draggedWidget.aspectRatio;
+					if (this.activeWidget.aspectRatio != null) {
+						aspectRatio = this.activeWidget.aspectRatio;
 					}
 					newHeight = newWidth / aspectRatio;
 				} // all this aspect ratio and min width/height stuff aint perfect
@@ -88,30 +101,30 @@ export class WidgetEditor {
 				newHeight = Math.max(50, newHeight);
 
 				if (this.dragState.corner.is_left) {
-					this.draggedWidget.posX -= (newWidth - this.draggedWidget.width);
+					this.activeWidget.posX -= (newWidth - this.activeWidget.width);
 				}
 				if (this.dragState.corner.is_top) {
-					this.draggedWidget.posY -= (newHeight - this.draggedWidget.height);
+					this.activeWidget.posY -= (newHeight - this.activeWidget.height);
 				}
 				
-				this.draggedWidget.width = newWidth;
-				this.draggedWidget.height = newHeight;
-			} else {
-				const maxX = window.innerWidth - this.draggedWidget.width;
-				const maxY = window.innerHeight - this.draggedWidget.height;
+				this.activeWidget.width = newWidth;
+				this.activeWidget.height = newHeight;
+			}
+			if (this.dragState.isDragging) {
+				const maxX = window.innerWidth - this.activeWidget.width;
+				const maxY = window.innerHeight - this.activeWidget.height;
 
 				const newX = Math.min(maxX, Math.max(0, event.clientX - this.dragState.offsetX));
 				const newY = Math.min(maxY, Math.max(0, event.clientY - this.dragState.offsetY));
 
-				this.draggedWidget.posX = newX;
-				this.draggedWidget.posY = newY;
+				this.activeWidget.posX = newX;
+				this.activeWidget.posY = newY;
 			}
 		}
 	}
 
 	handleMouseUp() {
-		this.draggedWidget = null;
-		this.dragState = { ...this.dragState, isResizing: false };
+		this.dragState = { ...this.dragState, isResizing: false, isDragging: false };
 	}
 
 	initializeDragListeners() {

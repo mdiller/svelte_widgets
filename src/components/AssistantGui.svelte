@@ -1,5 +1,5 @@
 <script>
-    import AssistantGlasses from "./AssistantGlasses.svelte";
+import AssistantGlasses from "./AssistantGlasses.svelte";
 import AssistantGuiStep from "./AssistantGuiStep.svelte";
 
 let { 
@@ -144,6 +144,8 @@ let {
 	& > div:first-child {
 		font-size: 40px;
 		font-weight: 200px;
+		margin-top: 10px;
+		margin-bottom: 20px;
 		
 	}
 	& > div:nth-child(2) {
@@ -191,21 +193,5 @@ let {
 		text-align: center;
 	}
 }
-
-
-// #content2 {
-// 	color: grey;
-// 	margin: auto;
-// 	text-align: center;
-// 	width: 100%;
-// 	overflow: hidden;
-// 	white-space: nowrap;
-
-// 	span {
-// 		color: grey;
-// 		font-weight: bold;
-// 		text-decoration: underline;
-// 	}
-// }
 
 </style>
